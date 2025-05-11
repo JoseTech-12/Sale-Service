@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
 
 class ClientService
 {
@@ -10,15 +12,23 @@ class ClientService
 
     public function __construct()
     {
-        $this->baseUrl = env('PRODUCT_SERVICE_UR', 'http://localhost:8002/api');
+        $this->baseUrl = env('CLIENT_SERVICE_URL', 'http://localhost:8001/api');
     }
 
     public function getClient($id)
     {
-        $response = Http::get("{$this->baseUrl}/showClient/{$id}");
+        try {
+            $token = request()->bearerToken();
+            $response = Http::withToken($token)->get("{$this->baseUrl}/showClient/{$id}");
 
-        if ($response->successful()) {
-            return $response->json();
+
+            if ($response->successful()) {
+                return $response->json()['client'];
+            }
+
+            Log::error("ClientService Error: {$response->status()} - {$response->body()}");
+        } catch (\Exception $e) {
+            Log::error("ClientService Exception: " . $e->getMessage());
         }
 
         return null;

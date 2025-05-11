@@ -3,24 +3,48 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
-class ClientService
+class ProductService
 {
     protected $baseUrl;
 
     public function __construct()
     {
-        $this->baseUrl = env('CLIENT_SERVICE_URL', 'http://localhost:8002/api');
+        $this->baseUrl = env('PRODUCT_SERVICE_URL', 'http://localhost:8002/api');
     }
 
-    public function getClient($id)
+    public function getProduct($id)
     {
-        $response = Http::get("{$this->baseUrl}/showProduct/{$id}");
+        try {
 
-        if ($response->successful()) {
-            return $response->json();
+            $token = request()->bearerToken();
+            $response = Http::withToken($token)->get("{$this->baseUrl}/showProduct/{$id}");
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+            Log::error("ProductService Error: {$response->status()} - {$response->body()}");
+        } catch (\Exception $e) {
+            Log::error("ProductService Exception: " . $e->getMessage());
+        }
+        return null;
+    }
+
+    public function updateStock($id, $cantidad)
+    {
+        $product = $this->getProduct($id);
+
+        if ($product && $product['stock'] >= $cantidad) {
+
+            $newStock = $product['stock'] - $cantidad;
+            $response = Http::put("{$this->baseUrl}/updateProductStock/{$id}", [
+                'stock' => $newStock
+            ]);
+
+            return $response->successful();
         }
 
-        return null;
+        return false;
     }
 }

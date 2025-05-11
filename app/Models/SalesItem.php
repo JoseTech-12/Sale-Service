@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class salesItem extends Model
+class SalesItem extends Model
 {
     use HasFactory;
 
@@ -21,10 +21,5 @@ class salesItem extends Model
     public function sale()
     {
         return $this->belongsTo(Sale::class);
-    }
-
-    public function product()
-    {
-        return $this->hasMany(Product::class);
     }
 }
