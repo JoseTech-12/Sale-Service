@@ -21,3 +21,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::get('/sales', [SaleController::class, 'index']);
 Route::post('/createSale', [SaleController::class, 'store']);
+Route::put('/updateSale/{id}', [SaleController::class, 'update']);
+Route::delete('/deleteSale/{id}', [SaleController::class, 'destroy']);
+Route::get('/showSales/{id}', [SaleController::class, 'show']);

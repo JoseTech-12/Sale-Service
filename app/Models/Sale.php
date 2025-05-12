@@ -18,13 +18,8 @@ class Sale extends Model
     ];
 
 
-    public function items(): BelongsTo
+    public function items(): HasMany
     {
-        return $this->belongsTo(SalesItem::class);
-    }
-
-    public function client()
-    {
-        return $this->belongsTo(Client::class);
+        return $this->hasMany(SalesItem::class);
     }
 }
