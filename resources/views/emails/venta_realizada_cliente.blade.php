@@ -23,6 +23,8 @@
         @endforeach
     </ul>
 
+    
+
     <p>¡Esperamos que disfrutes tu compra!</p>
 </body>
 </html>
